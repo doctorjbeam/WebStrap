@@ -1,0 +1,111 @@
+﻿@model StatusViewModel
+@{
+    ViewBag.Title = UIStrings.TVServerStatus;
+    Html.jQuery().Enable();
+}
+
+@if (Model.HasTAS)
+{
+    <h3>@UIStrings.Cards</h3>
+    <table class="table table-striped">
+		<thead>
+			<tr>
+				<th>@UIStrings.Card</th>
+				<th>@UIStrings.CardName</th>
+				<th>@UIStrings.CardState</th>
+				<th>@UIStrings.CardGrabbingEPG</th>
+				<th>@UIStrings.Channel</th>
+				<th>@UIStrings.CardScrambled</th>
+				<th>@UIStrings.Username</th>
+				<th colspan="2">&nbsp;</th>
+			</tr>
+		</thead>
+		<tbody>
+
+			@foreach (var card in Model.Cards)
+			{
+				<tr class="@if(card.GrabbingEPG) { <text>warning</text> } else if (card.IsActive) { <text>success</text> }">
+					<td>@card.CardId</td>
+					<td>@card.Name</td>
+					<td>@card.State</td>
+					<td>@(card.GrabbingEPG ? UIStrings.Yes : UIStrings.No)</td>
+					<td>@card.ChannelName</td>
+					@if (card.IsActive)
+					{
+						<td>@(card.Scrambled ? UIStrings.Yes : UIStrings.No)</td>
+						<td>@card.Username</td>
+						<td>@(!card.VirtualCard.IsRecording ? Html.ActionLink(UIStrings.Stop, "Stop", new { user = card.Username }) : MvcHtmlString.Empty)</td>
+						<td>@Html.ActionLink(UIStrings.Details, "Details", new { user = card.Username })</td>
+					}
+					else
+					{
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+					}
+				</tr>
+			}
+		</tbody>
+    </table>
+}
+    
+<h3>@UIStrings.DiskInformation</h3>
+<table class="table table-striped">
+	<thead>
+		<tr>
+			<th>@UIStrings.DiskInfoDisk</th>
+			<th>@UIStrings.DiskInfoUsed</th>
+			<th>@UIStrings.DiskInfoSize</th>
+			<th>@UIStrings.DiskInfoAvailable</th>
+		</tr>
+	</thead>
+	<tbody>
+
+		@foreach (var disk in Model.DiskInformation.OrderBy(x => x.Disk.StartsWith(@"\\")).ThenBy(x => x.Disk))
+		{
+			<tr class="@if((disk.Size > 500 && disk.PercentageUsed > 95) || (disk.Size <= 500 && disk.PercentageUsed > 90)) {<text>danger</text>}" >
+				<td>@disk.Disk</td>
+				<td>@Math.Round(disk.Used, 1) GB</td>
+				<td>@Math.Round(disk.Size, 1) GB</td>
+				<td>
+					@if((disk.Size > 500 && disk.PercentageUsed > 95) || (disk.Size <= 500 && disk.PercentageUsed > 90))
+					{
+						<span style="color: Red;">@Math.Round(100 - @disk.PercentageUsed)%</span>
+					} else {
+						@Math.Round(100 - @disk.PercentageUsed)<text>%</text>
+					}
+				</td>
+			</tr>
+		}
+	</tbody>
+</table>
+
+@if (Model.HasSystemInformation)
+{
+    <text>
+    <h3>@UIStrings.SystemStatus</h3>
+    <ul>
+        <li>@UIStrings.CurrentCPUUsage <span id="cpuUsage">@Model.CpuUsage</span>%</li>
+        <li>@UIStrings.CurrentMemoryUsage <span id="memoryUsage">@Model.UsedMemoryMegaBytes</span>MB / @Model.TotalMemoryMegaBytes MB</li>
+    </ul>
+
+    <script type="text/javascript">
+    $(function () {
+        var updateCounters = function (url) {
+            $.ajax({ // cannot use $.getJSON() here because it doesn't support setting cache to false
+                url: '@Url.Action("GetPerformanceCounters", "Status")',
+                dataType: "json",
+                cache: false,
+                success: function (result) {
+                    $("#cpuUsage").html(result.CPU);
+                    $("#memoryUsage").html(result.Memory);
+                }
+            });
+        };
+        setInterval(updateCounters, 5000);
+        updateCounters();
+    });
+    </script>
+    </text>
+}

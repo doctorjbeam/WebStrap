@@ -1,0 +1,21 @@
+﻿@using MPExtended.Services.Common.Interfaces
+@model MPExtended.Services.TVAccessService.Interfaces.WebRecordingBasic
+@{
+    ViewBag.Title = Model.Title;
+}
+
+<div class="jumbotron">
+	<h1 style="margin-top:0;">@Model.Title</h1>
+	
+	<div>
+		<span class="label label-info">@Model.ChannelName</span>
+	</div>
+	
+	<p>@Model.Description</p>
+	<small><strong>@Model.StartTime</strong> to <strong>@Model.EndTime</strong></small>
+	
+	<div>
+		<a class="btn btn-success btn-lg" href="/Television/WatchRecording/@Model.Id"><span class="glyphicon glyphicon-play"></span> Watch</a>
+		<a class="btn btn-primary btn-lg" href="/Stream/DownloadItem?item=@Model.Id&type=Recording"><span class="glyphicon glyphicon-download"></span> Download (@ViewBag.Quality)</a>
+	</div>
+</div>

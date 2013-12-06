@@ -1,0 +1,27 @@
+﻿@model IEnumerable<MPExtended.Services.TVAccessService.Interfaces.WebScheduledRecording>
+           
+@Html.Assets().AddViewStylesheet("Home/Index.css")
+
+@if (ViewBag.Availability.TAS && Model.Count() > 0)
+{
+    <h3>@UIStrings.TodaysSchedules</h3>
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th>Title</th>
+				<th>Channel</th>
+				<th>When</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var schedule in Model)
+			{
+			<tr>
+				<td>@schedule.Title</td>
+				<td><a href="/Television/WatchLiveTV?channelId=@schedule.ChannelId"><span class="label label-info">@schedule.ChannelName</span></a></td>
+				<td>@schedule.StartTime.ToShortTimeString() - @schedule.EndTime.ToShortTimeString()</td>
+			</tr>
+			}
+		</tbody>
+	</table>
+} 

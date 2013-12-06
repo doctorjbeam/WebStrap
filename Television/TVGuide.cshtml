@@ -1,0 +1,92 @@
+﻿<div class="row">
+	<div class="col-md-2">
+		<button name="time" value="@Model.EarlierGuideStart.ToString("s")" class="btn btn-primary">@UIStrings.Earlier</button>
+	</div>
+	<div class="col-md-8" style="text-align:center;">
+		@model TVGuideViewModel
+		@{
+			ViewBag.Title = UIStrings.TVGuide;
+		}
+		
+		@Html.jQuery().EnableUI()
+		@Html.Assets().AddViewStylesheet("Television/TVGuide.css")
+		@Html.Assets().AddViewScript("Television/TVGuide.js")
+		
+		<div id="TVGuideNavigation">
+			@using (Html.BeginForm("TVGuide", "Television", FormMethod.Get))
+			{
+				@Html.DropDownList("group", Model.Groups)
+				@Html.EditorFor(model => model.GuideStart, "Date", "date", new { openOnFocus = true })
+				@Html.Hidden("time", Model.GuideStart.ToString("s"))
+			}
+		</div>
+	</div>
+	<div class="col-md-2" style="text-align:right;">
+		@{  foreach (var marker in Model.TimeMarkers)
+			{
+				if (marker.Last)
+				{
+					<button name="time" value="@Model.LaterGuideStart.ToString("s")" class="btn">@UIStrings.Later</button>
+				}
+			}
+		}
+	</div>
+</div>
+
+@using (Html.BeginForm("TVGuide", "Television", FormMethod.Get))
+{
+    @Html.Hidden("group", Model.GroupId)
+
+    <div id="TVGuide">
+        <div class="headerrow">
+            <div class="headerspacer">&nbsp;</div>
+            <div class="programs">
+                @{  foreach (var marker in Model.TimeMarkers)
+                    {
+                        <div class="programcontainer" style="width: 12.5%;">
+                            <div class="headertime">
+                                <small>@marker.Format</small>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+
+        @{  foreach (var channel in @Model.Channels)
+            {
+                <div class="channelrow">
+                    <div class="channelname" style="background-image: url(@Url.Action("ChannelLogo", new { channelId = channel.Id, width = 50, height = 50 }));">
+                        @Html.ActionLink(channel.DisplayName, "WatchLiveTV", new { channelId = channel.Id })
+                    </div>
+                    <div class="programs">
+                        @{
+                            DateTime? lastEnd = null;
+                            double leftOffset = 0;
+                            
+                            foreach (var program in channel.Programs)
+                            {
+                                if (lastEnd != null && lastEnd < program.StartTime)
+                                {
+                                    leftOffset += 100 * (program.StartTime - lastEnd.Value).TotalMinutes / (Model.GuideEnd - Model.GuideStart).TotalMinutes;
+                                }
+                                
+                                <div class="programcontainer" style="width: @program.GetCssPercentageWidth(); left: @leftOffset%;">
+                                @{  if (program.GetPercentageWidth() > 1)
+                                    {
+                                        <div class="program @(program.IsCurrent ? "current" : "") @(program.IsScheduled ? "scheduled" : "")">
+                                            @Html.ActionLink(program.Title, "ProgramDetails", new { programId = program.Id }, new { alt = program.Title })
+                                        </div>
+                                    }
+                                }
+                                </div>
+                            
+                                lastEnd = program.EndTime;
+                            }
+                        }
+                    </div>
+                </div>
+            }
+        }
+    </div>
+}

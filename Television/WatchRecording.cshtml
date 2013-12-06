@@ -1,0 +1,39 @@
+﻿@model MPExtended.Services.TVAccessService.Interfaces.WebRecordingBasic
+@{
+    ViewBag.Title = String.Format(UIStrings.WatchingRecording, Model.Title);
+}
+
+<h2>@UIStrings.Play</h2>
+@Html.Raw(String.Format(UIStrings.YouAreWatchingRecording, Model.Title))
+<br />
+<br />
+
+<div id="controls"></div>
+
+<div>
+@{Html.RenderAction("Player", "Stream", new
+  {
+      type = MPExtended.Services.Common.Interfaces.WebMediaType.Recording,
+      itemId = @Model.Id
+  });
+}
+</div>
+
+
+<script>
+	$(document).ready(function() {
+		$("input").each(function() {
+			if ($(this).attr("value") == "play") {
+				$(this).appendTo("#controls").replaceWith("<button class='btn btn-success' onClick='getVlcPlayer('vlcplayer').playlist.play();'><span class='glyphicon glyphicon-play'></span> Play</button>");
+			}
+			
+			if ($(this).attr("value") == "pause") {
+				$(this).appendTo("#controls").replaceWith("<button class='btn btn-info' onClick='getVlcPlayer('vlcplayer').playlist.togglePause();'><span class='glyphicon glyphicon-pause'></span> Pause</button>");
+			}
+			
+			if ($(this).attr("value") == "stop") {
+				$(this).appendTo("#controls").replaceWith("<button class='btn btn-info' onClick='getVlcPlayer('vlcplayer').playlist.stop();'><span class='glyphicon glyphicon-stop'></span> Stop</button>");
+			}
+		});
+	});
+</script>

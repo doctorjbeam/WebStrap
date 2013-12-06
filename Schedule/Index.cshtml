@@ -1,0 +1,39 @@
+﻿@model IEnumerable<ScheduleViewModel>
+@{
+    ViewBag.Title = UIStrings.Schedules;
+}
+
+<h2>@UIStrings.Schedules</h2>
+
+<table class="table table-striped">
+	<thead>
+		<tr>
+			<th>@UIStrings.Program</th>
+			<th>@UIStrings.ScheduleHeaderRepetition</th>
+			<th>@UIStrings.Channel</th>
+			<th>@UIStrings.ScheduleHeaderStartTime</th>
+			<th>@UIStrings.ScheduleHeaderEndTime</th>
+			<th colspan="2"></th>
+		</tr>
+	</thead>
+    <tbody>
+		@foreach (var item in Model) {
+			<tr>
+				<td>@Html.DisplayFor(x => item.Title)</td>
+				<td>@item.ScheduleTypeName</td>
+				<td><span class="label label-info">@Html.DisplayFor(x => item.ChannelName)</span></td>
+				<td>@Html.DisplayFor(x => item.StartTimeFormatted)</td>
+				<td>@Html.DisplayFor(x => item.EndTimeFormatted)</td>
+				<td>
+					@Html.ActionLink(UIStrings.Delete, "DeleteScheduleById", new { id = item.Id })
+				</td>
+				<td>
+					@Html.ActionLink(UIStrings.Edit, "EditSchedule", new { id = item.Id }) 
+				</td>
+			</tr>
+		}
+	</tbody>
+</table>
+
+<br />
+@Html.ActionLink(UIStrings.AddSchedule, "AddSchedule")

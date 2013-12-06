@@ -1,0 +1,27 @@
+﻿@model IEnumerable<MPExtended.Services.TVAccessService.Interfaces.WebRecordingBasic>
+@{
+    ViewBag.Title = UIStrings.Recordings;
+}
+
+<h2>@UIStrings.YourRecordings</h2>
+
+<table class="table">
+	<thead>
+		<tr>
+			<th>Channel</th>
+			<th>Title</th>
+			<th>Date</th>
+			<th>Times watched</th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var recording in Model) {
+		<tr>
+			<td><span class="label label-info">@recording.ChannelName</span></td>
+			<td><a href="/Television/Recording/@recording.Id">@recording.Title</a></td>
+			<td>@recording.StartTime.ToShortDateString()</td>
+			<td>@recording.TimesWatched</td>
+		</tr>
+		}
+	</tbody>
+</table>

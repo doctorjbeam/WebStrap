@@ -1,0 +1,28 @@
+﻿@model ProgramDetailsViewModel
+@{
+    ViewBag.Title = Model.Title;
+}
+
+<div class="jumbotron">
+	<h1 style="margin-top:0;">@Model.Title</h1>
+	
+	<div>
+		<span class="label label-info">@Model.ChannelName</span>
+	</div>
+	
+	<p>@Model.Description</p>
+	
+	<small><strong>@Model.StartTime</strong> to <strong>@Model.EndTime</strong></small>
+	
+	<div>
+		@if (@Model.IsScheduled) {
+			<a class="btn btn-danger btn-lg" href="/Schedule/CancelSchedule?programId=@Model.Id"><span class="glyphicon glyphicon-star-empty"></span> Delete scheduled recording</a>
+		} else {
+			<a class="btn btn-primary btn-lg" href="/Schedule/CreateSchedule?programId=@Model.Id"><span class="glyphicon glyphicon-star"></span> Record</a>
+		}
+		
+		@if (Model.CanWatchLive) {
+			<a class="btn btn-success btn-lg" href="/Television/WatchLiveTV?channelId=@Model.ChannelId"><span class="glyphicon glyphicon-play"></span> Watch</a>
+		}
+	</div>
+</div>

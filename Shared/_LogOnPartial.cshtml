@@ -1,0 +1,9 @@
+﻿@if (Request.IsAuthenticated)
+{
+    @Html.Raw(String.Format(UIStrings.WelcomeUsername, Context.User.Identity.Name))
+	<a class="btn btn-danger btn-sm" href="/Account/LogOff" style="min-height: initial; display:inline-block;">Log off</a>
+}
+else
+{
+    <text>[ @Html.ActionLink(UIStrings.LogOn, "LogOn", "Account") ]</text>
+}

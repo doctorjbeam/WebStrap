@@ -1,0 +1,26 @@
+﻿@model IEnumerable<MPExtended.Services.TVAccessService.Interfaces.WebRecordingBasic>
+		   
+@Html.Assets().AddViewStylesheet("Home/Index.css")
+
+@if (ViewBag.Availability.TAS && Model.Count() > 0)
+{
+	<h2>@Html.ActionLink(UIStrings.LatestRecordings, "NewRecordings", "Home", new { count = 50 }, new { })</h2>
+	<div class="row" style="max-width: none;">
+		@foreach (var recording in Model)
+		{
+			<div class="col-xs-6 col-md-3">
+			<div class="thumbnail">
+				<a href="@Url.Action("Recording", "Television", new { id = recording.Id })" title="@recording.Title - @recording.StartTime.ToShortDateString()" style="display:block;height: 200px;background-image: url(@Url.Action("RecordingPreview", "Television", new { id = recording.Id, width = 440 }));background-size:cover;background-position:center;">>
+
+				</a>
+				<div class="caption">
+					<h3>@recording.Title</h3>
+					<p class="text-muted">@recording.StartTime.ToShortDateString()</p>
+					<p>@recording.Description</p>
+					<p><a href="/Television/Recording/@recording.Id" class="btn btn-success"><span class="glyphicon glyphicon-play"></span> Watch</a></p>
+				</div>
+			</div>
+			</div>
+		}
+	</div>
+}
